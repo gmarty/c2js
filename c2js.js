@@ -5,11 +5,11 @@
  * in mind, as such I strongly recommend against its use.
  *
  * @todo Things to implement:
- *  * Transform '#define' to 'var/const'.
+ *  * Transform 'static' to 'var/const'.
  *  * Variable declarations to 'var'.
  */
 
-var sys = require('sys'),
+var util = require('util'),
     fs = require('fs'),
     file = process.argv[2],
     cSource = fs.readFileSync(file, 'utf-8');
@@ -25,14 +25,17 @@ cSource = replace(cSource, [
   [/#else/g, '} else {'],
   [/#endif/g, '}'],
 
-  // Remove &var and *var notations.
-  [/&([a-zA-Z_]+)/g, '$1'],
-  [/\*([a-zA-Z_]+)/g, '$1'],
-
   // One line '/*'' style comments to '//'.
   [/\/\*(.+)\*\//g, function(a, b) {
     return '// ' + b.trim();
   }],
+
+  // Replace #define by var.
+  [/(\s*)\#define\s+(\S+)\s+(\S+)/g, '$1/** @const */ var $2 = $3;'],
+
+  // Remove &var and *var notations.
+  [/&([a-zA-Z_]+)/g, '$1'],
+  [/\*([a-zA-Z_]+)/g, '$1'],
 
   // Specific rules.
   // @todo Remove the last \n in fprintf.
@@ -49,7 +52,7 @@ cSource = replace(cSource, [
         args = [],
         returnJSType;
 
-    sys.puts('returnType', sys.inspect(returnType));
+    util.puts('returnType', util.inspect(returnType));
 
     // We do not parse native C functions.
     if (isNativeFunction(returnType.trim()) || isNativeFunction(functionName.trim())) {
@@ -80,6 +83,10 @@ cSource = replace(cSource, [
         tmp = parameters[i].trim().split(' ');
         argType = tmp[0].trim();
         argName = tmp[1];
+
+        if (typeof argName === 'undefined') {
+          return '\n' + returnType + ' ' + functionName + '(' + parameters + ')';
+        }
 
         if (argName.substr(0, 1) === '*') {
           argReference = true;
@@ -180,4 +187,4 @@ function replace(str, pairs) {
 
 //return;
 
-sys.puts(cSource);
+util.puts(cSource);
