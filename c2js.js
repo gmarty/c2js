@@ -14,6 +14,27 @@ var util = require('util'),
     file = process.argv[2],
     cSource = fs.readFileSync(file, 'utf-8');
 
+/**
+ * Mapping of C types to JavaScript primitives.
+ */
+var cTypesToJs = {
+  'float': 'number',
+  'unsigned': 'number',
+  'int': 'number',
+  'int16_t': 'number',
+  'int32_t': 'number',
+  'uint8_t': 'number',
+  'uint16_t': 'number',
+  'uint32_t': 'number'
+};
+
+// A regular expression matching all C types.
+var cTypesRegexp = [];
+for (var i in cTypesToJs) {
+  cTypesRegexp.push(i);
+}
+cTypesRegexp = cTypesRegexp.join('|');
+
 cSource = replace(cSource, [
   [/\t/g, '  '],
   [/#include/g, '// #include'],
@@ -32,6 +53,11 @@ cSource = replace(cSource, [
 
   // Replace #define by var.
   [/(\s*)\#define\s+(\S+)\s+(\S+)/g, '$1/** @const */ var $2 = $3;'],
+  
+  // Replace var declarations and annotate type.
+  [RegExp('(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
+    return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
+  }],
 
   // Remove &var and *var notations.
   [/&([a-zA-Z_]+)/g, '$1'],
@@ -152,19 +178,13 @@ cSource = replace(cSource, [
      */
     function getCType(str) {
       str = str.trim();
-
-      switch (str) {
-        case 'unsigned':
-        case 'int':
-        case 'int16_t':
-        case 'int32_t':
-        case 'uint8_t':
-        case 'uint16_t':
-        case 'uint32_t':
-          return 'number';
-        case 'void':
-        case 'static':
-          return '';
+      
+      if (typeof cTypesToJs[str] != 'undefined') {
+        return cTypesToJs[str]
+      }
+      
+      if (str === 'void' || str === 'static')  {
+        return '';
       }
 
       return str;
