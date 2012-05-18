@@ -61,6 +61,10 @@ cSource = replace(cSource, [
     return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
   }],
 
+  // Replace var declarations for user defined types.
+  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d]+\s*=)/g, '$1/** @type {$2} */ var $3'],
+  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d\[\]]+\s*)([,;])/g, '$1/** @type {$2} */ var $3 = {}$4'],
+
   // Remove &var and *var notations.
   [/([\{\},\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
 
