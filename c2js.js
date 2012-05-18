@@ -1,12 +1,11 @@
 /**
  * I wrote this script to help me porting a C application to JavaScript.
  * I decided to use several regexp replacements rather than a parser.
- * The set of regexp is very limited and developped for a particular project
+ * The set of regexp is very limited and developed for a particular project
  * in mind, as such I strongly recommend against its use.
  *
  * @todo Things to implement:
  *  * Transform 'static' to 'var/const'.
- *  * Variable declarations to 'var'.
  */
 
 var util = require('util'),
