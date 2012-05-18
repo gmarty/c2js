@@ -55,15 +55,14 @@ cSource = replace(cSource, [
 
   // Replace #define by var.
   [/(\s*)\#define\s+(\S+)\s+(\S+)/g, '$1/** @const */ var $2 = $3;'],
-  
+
   // Replace var declarations and annotate type.
   [RegExp('(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
     return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
   }],
 
   // Remove &var and *var notations.
-  [/&([a-zA-Z_]+)/g, '$1'],
-  [/\*([a-zA-Z_]+)/g, '$1'],
+  [/([\{\},\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
 
   // Specific rules.
   // @todo Remove the last \n in fprintf.
@@ -180,11 +179,11 @@ cSource = replace(cSource, [
      */
     function getCType(str) {
       str = str.trim();
-      
+
       if (typeof cTypesToJs[str] != 'undefined') {
         return cTypesToJs[str]
       }
-      
+
       if (str === 'void' || str === 'static')  {
         return '';
       }
