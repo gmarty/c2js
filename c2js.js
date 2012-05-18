@@ -44,6 +44,7 @@ cSource = replace(cSource, [
   [/\bNULL\b/g, 'null'],
   [/#if 0/g, 'if (0) {'],
   [/#ifdef (.+)/g, 'if ($1) {'],
+  [/#ifndef (.+)/g, 'if (!$1) {'],
   [/#else/g, '} else {'],
   [/#endif/g, '}'],
 
