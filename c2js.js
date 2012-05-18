@@ -14,6 +14,7 @@ var util = require('util'),
     file = process.argv[2],
     cSource = fs.readFileSync(file, 'utf-8');
 
+
 /**
  * Mapping of C types to JavaScript primitives.
  */
@@ -185,10 +186,10 @@ cSource = replace(cSource, [
       str = str.trim();
 
       if (typeof cTypesToJs[str] != 'undefined') {
-        return cTypesToJs[str]
+        return cTypesToJs[str];
       }
 
-      if (str === 'void' || str === 'static')  {
+      if (str === 'void' || str === 'static') {
         return '';
       }
 
