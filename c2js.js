@@ -17,25 +17,26 @@ var util = require('util'),
 
 /**
  * Mapping of C types to JavaScript primitives.
+ * @const
  */
-var cTypesToJs = {
-  'double': 'number',
-  'float': 'number',
-  'int': 'number',
-  'int16_t': 'number',
-  'int32_t': 'number',
-  'uint16_t': 'number',
-  'uint32_t': 'number',
-  'uint8_t': 'number',
-  'unsigned': 'number'
-};
+var cTypesToJs =
+    {
+      'double': 'number',
+      'float': 'number',
+      'int': 'number',
+      'int16_t': 'number',
+      'int32_t': 'number',
+      'uint16_t': 'number',
+      'uint32_t': 'number',
+      'uint8_t': 'number',
+      'unsigned': 'number'
+    },
 
-// A regular expression matching all C types.
-var cTypesRegexp = [];
-for (var i in cTypesToJs) {
-  cTypesRegexp.push(i);
-}
-cTypesRegexp = cTypesRegexp.join('|');
+    /**
+     * A regular expression matching all C types.
+     * @const
+     */
+    cTypesRegexp = Object.keys(cTypesToJs).join('|');
 
 cSource = replace(cSource, [
   [/\t/g, '  '],
