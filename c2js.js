@@ -50,7 +50,9 @@ var reservedKeywords = [
   //'unsigned',
   //'void',
   'volatile',
-  'while'
+  'while',
+
+  'printf'
 ];
 
 
