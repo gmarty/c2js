@@ -16,7 +16,7 @@ var util = require('util'),
 
 /**
  * List of reserved keywords in C.
- * @type {Array}
+ * @const
  */
 var reservedKeywords = [
   'auto',
@@ -59,16 +59,45 @@ var reservedKeywords = [
  * @const
  */
 var cTypesToJs = {
+  // Basic types
   'char': 'string',
-  'double': 'number',
-  'float': 'number',
+  'signed char': 'string',
+  'unsigned char': 'string',
+  'short': 'number',
+  'short int': 'number',
+  'signed short': 'number',
+  'signed short int': 'number',
+  'unsigned short': 'number',
+  'unsigned short int': 'number',
   'int': 'number',
+  'signed int': 'number',
+  'unsigned': 'number',
+  'unsigned int': 'number',
+  'long': 'number',
+  'long int': 'number',
+  'signed long': 'number',
+  'signed long int': 'number',
+  'unsigned long': 'number',
+  'unsigned long int': 'number',
+  'long long': 'number',
+  'long long int': 'number',
+  'signed long long': 'number',
+  'signed long long int': 'number',
+  'unsigned long long': 'number',
+  'unsigned long long int': 'number',
+  'float': 'number',
+  'double': 'number',
+  'long double': 'number',
+
+  // Fix width integer types
+  'int8_t': 'number',
   'int16_t': 'number',
   'int32_t': 'number',
+  'int64_t': 'number',
+  'uint8_t': 'number',
   'uint16_t': 'number',
   'uint32_t': 'number',
-  'uint8_t': 'number',
-  'unsigned': 'number'
+  'uint64_t': 'number'
 };
 
 
