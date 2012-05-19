@@ -84,7 +84,7 @@ cSource = replace(cSource, [
         args = [],
         returnJSType;
 
-    util.puts('returnType', util.inspect(returnType));
+    //util.puts('returnType', util.inspect(returnType));
 
     // We do not parse native C functions.
     if (isNativeFunction(returnType.trim()) || isNativeFunction(functionName.trim())) {
