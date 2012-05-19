@@ -20,6 +20,7 @@ var util = require('util'),
  */
 var cTypesToJs =
     {
+      'char': 'string',
       'double': 'number',
       'float': 'number',
       'int': 'number',
@@ -32,9 +33,9 @@ var cTypesToJs =
     },
 
     /**
-     * A regular expression matching all C types.
-     * @const
-     */
+   * A regular expression matching all C types.
+   * @const
+   */
     cTypesRegexp = Object.keys(cTypesToJs).join('|');
 
 cSource = replace(cSource, [
@@ -57,27 +58,8 @@ cSource = replace(cSource, [
   // Replace #define by var.
   [/(\s*)\#define\s+(\S+)\s+(\S+)/g, '$1/** @const */ var $2 = $3;'],
 
-  // Replace var declarations and annotate type.
-  [RegExp('(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
-    return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
-  }],
-
-  // Replace var declarations for user defined types.
-  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d]+\s*=)/g, '$1/** @type {$2} */ var $3'],
-  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d\[\]]+\s*)([,;])/g, '$1/** @type {$2} */ var $3 = {}$4'],
-
-  // Remove &var and *var notations.
-  [/([\{\}\(,\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
-
-  // Specific rules.
-  // @todo Remove the last \n in fprintf.
-  [/fprintf\(MSG_OUT, *([^)]+)/g, 'printf($1'],
-  [/fprintf\(MSG_OUT, */g, 'printf('],
-  [/fprintf\(stderr, *([^)]+)\)/g, 'console.error(sprintf($1))'],
-  [/\bTRACE\b/g, 'DEBUG'],
-
   // Parse functions and generate JS equivalent + JSDoc annotations.
-  [/\n([a-z0-9_* ]+) ([^ ]+)\(([^);&|=.]*)\)/g, function(s, returnType, functionName, parameters) {
+  [/\n([a-z0-9_* ]+)\s(\S+)\(([^);&|=.]*)\)/gm, function(s, returnType, functionName, parameters) {
     var str = '\n',
         i, tmp,
         argType, argName, argReference,
@@ -195,7 +177,29 @@ cSource = replace(cSource, [
 
       return str;
     }
-  }]
+  }],
+
+  // Replace var declarations and annotate type.
+  [RegExp('(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
+    return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
+  }],
+
+  // Replace var declarations for user defined types.
+  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d]+\s*=)/g, '$1/** @type {$2} */ var $3'],
+  [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d\[\]]+\s*)([,;])/g, '$1/** @type {$2} */ var $3 = {}$4'],
+
+  // Remove &var and *var notations.
+  [/([\{\}\(,\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
+
+  // Transform malloc allocations to class instantiations.
+  [/\(([a-zA-Z_]+) \*\)malloc\(sizeof\(\1\)\);/g, 'new $1();'],
+
+  // Specific rules.
+  // @todo Remove the last \n in fprintf.
+  [/fprintf\(MSG_OUT, *([^)]+)/g, 'printf($1'],
+  [/fprintf\(MSG_OUT, */g, 'printf('],
+  [/fprintf\(stderr, *([^)]+)\)/g, 'console.error(sprintf($1))'],
+  [/\bTRACE\b/g, 'DEBUG']
 ]);
 
 function replace(str, pairs) {
