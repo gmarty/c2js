@@ -67,7 +67,7 @@ cSource = replace(cSource, [
   [/([\{\},\n;]\s*)([a-zA-Z_]+_t)\s*[\*&]?([a-zA-Z_\d\[\]]+\s*)([,;])/g, '$1/** @type {$2} */ var $3 = {}$4'],
 
   // Remove &var and *var notations.
-  [/([\{\},\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
+  [/([\{\}\(,\n;=]\s*)[\*&]([a-zA-Z_]+)/g, '$1$2'],
 
   // Specific rules.
   // @todo Remove the last \n in fprintf.
