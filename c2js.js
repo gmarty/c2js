@@ -15,28 +15,68 @@ var util = require('util'),
 
 
 /**
+ * List of reserved keywords in C.
+ * @type {Array}
+ */
+var reservedKeywords = [
+  'auto',
+  'break',
+  'case',
+  'char',
+  'const',
+  'continue',
+  'default',
+  'do',
+  'double',
+  'else',
+  'enum',
+  'extern',
+  'float',
+  'for',
+  'goto',
+  'if',
+  'int',
+  'long',
+  'register',
+  'return',
+  'short',
+  'signed',
+  'sizeof',
+  'static',
+  'struct',
+  'switch',
+  'typedef',
+  'union',
+  'unsigned',
+  'void',
+  'volatile',
+  'while'
+];
+
+
+/**
  * Mapping of C types to JavaScript primitives.
  * @const
  */
-var cTypesToJs =
-    {
-      'char': 'string',
-      'double': 'number',
-      'float': 'number',
-      'int': 'number',
-      'int16_t': 'number',
-      'int32_t': 'number',
-      'uint16_t': 'number',
-      'uint32_t': 'number',
-      'uint8_t': 'number',
-      'unsigned': 'number'
-    },
+var cTypesToJs = {
+  'char': 'string',
+  'double': 'number',
+  'float': 'number',
+  'int': 'number',
+  'int16_t': 'number',
+  'int32_t': 'number',
+  'uint16_t': 'number',
+  'uint32_t': 'number',
+  'uint8_t': 'number',
+  'unsigned': 'number'
+};
 
-    /**
-   * A regular expression matching all C types.
-   * @const
-   */
-    cTypesRegexp = Object.keys(cTypesToJs).join('|');
+
+/**
+ * A regular expression matching all C types.
+ * @const
+ */
+var cTypesRegexp = Object.keys(cTypesToJs).join('|');
 
 cSource = replace(cSource, [
   [/\t/g, '  '],
@@ -144,19 +184,7 @@ cSource = replace(cSource, [
      */
     function isNativeFunction(str) {
       str = str.trim();
-
-      switch (str) {
-        case '':
-        case 'if':
-        case 'switch':
-        case 'while':
-        case 'printf':
-        case 'fprintf':
-        case 'return':
-          return true;
-      }
-
-      return false;
+      return reservedKeywords.indexOf(str) > -1;
     }
 
     /**
