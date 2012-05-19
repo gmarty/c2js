@@ -238,7 +238,7 @@ cSource = replace(cSource, [
   }],
 
   // Replace var declarations and annotate type.
-  [RegExp('(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
+  [RegExp('\b(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
     return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
   }],
 
