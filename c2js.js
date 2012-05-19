@@ -22,33 +22,33 @@ var reservedKeywords = [
   'auto',
   'break',
   'case',
-  'char',
+  //'char',
   'const',
   'continue',
   'default',
   'do',
-  'double',
+  //'double',
   'else',
   'enum',
   'extern',
-  'float',
+  //'float',
   'for',
   'goto',
   'if',
-  'int',
-  'long',
+  //'int',
+  //'long',
   'register',
   'return',
-  'short',
-  'signed',
+  //'short',
+  //'signed',
   'sizeof',
   'static',
   'struct',
   'switch',
   'typedef',
   'union',
-  'unsigned',
-  'void',
+  //'unsigned',
+  //'void',
   'volatile',
   'while'
 ];
@@ -128,7 +128,8 @@ cSource = replace(cSource, [
   [/(\s*)\#define\s+(\S+)\s+(\S+)/g, '$1/** @const */ var $2 = $3;'],
 
   // Parse functions and generate JS equivalent + JSDoc annotations.
-  [/\n([a-z0-9_* ]+)\s(\S+)\(([^);&|=.]*)\)/gm, function(s, returnType, functionName, parameters) {
+  //[/\n([a-z0-9_* ]+)\s(\S+)\(([^);&|=.]*)\)/gm, function(s, returnType, functionName, parameters) {
+  [/\n([a-z0-9_* ]+)\s(\S+)\(([^);&|=\.]*)\)/g, function(s, returnType, functionName, parameters) {
     var str = '\n',
         i, tmp,
         argType, argName, argReference,
@@ -138,7 +139,7 @@ cSource = replace(cSource, [
     //util.puts('returnType', util.inspect(returnType));
 
     // We do not parse native C functions.
-    if (isNativeFunction(returnType.trim()) || isNativeFunction(functionName.trim())) {
+    if (isNativeFunction(returnType) || isNativeFunction(functionName)) {
       return '\n' + returnType + ' ' + functionName + '(' + parameters + ')';
     }
 
