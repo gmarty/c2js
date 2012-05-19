@@ -59,45 +59,45 @@ var reservedKeywords = [
  * @const
  */
 var cTypesToJs = {
-  // Basic types
-  'char': 'string',
-  'signed char': 'string',
-  'unsigned char': 'string',
-  'short': 'number',
-  'short int': 'number',
-  'signed short': 'number',
-  'signed short int': 'number',
-  'unsigned short': 'number',
-  'unsigned short int': 'number',
-  'int': 'number',
-  'signed int': 'number',
-  'unsigned': 'number',
-  'unsigned int': 'number',
-  'long': 'number',
-  'long int': 'number',
-  'signed long': 'number',
-  'signed long int': 'number',
-  'unsigned long': 'number',
-  'unsigned long int': 'number',
-  'long long': 'number',
-  'long long int': 'number',
-  'signed long long': 'number',
-  'signed long long int': 'number',
-  'unsigned long long': 'number',
-  'unsigned long long int': 'number',
-  'float': 'number',
-  'double': 'number',
-  'long double': 'number',
-
   // Fix width integer types
+  'uint8_t': 'number',
+  'uint16_t': 'number',
+  'uint32_t': 'number',
+  'uint64_t': 'number',
   'int8_t': 'number',
   'int16_t': 'number',
   'int32_t': 'number',
   'int64_t': 'number',
-  'uint8_t': 'number',
-  'uint16_t': 'number',
-  'uint32_t': 'number',
-  'uint64_t': 'number'
+
+  // Basic types
+  'unsigned long long int': 'number',
+  'signed long long int': 'number',
+  'unsigned short int': 'number',
+  'unsigned long long': 'number',
+  'unsigned long int': 'number',
+  'signed short int': 'number',
+  'signed long long': 'number',
+  'signed long int': 'number',
+  'unsigned short': 'number',
+  'unsigned char': 'string',
+  'unsigned long': 'number',
+  'long long int': 'number',
+  'signed short': 'number',
+  'unsigned int': 'number',
+  'signed char': 'string',
+  'signed long': 'number',
+  'long double': 'number',
+  'signed int': 'number',
+  'short int': 'number',
+  'long long': 'number',
+  'unsigned': 'number',
+  'long int': 'number',
+  'double': 'number',
+  'short': 'number',
+  'float': 'number',
+  'char': 'string',
+  'long': 'number',
+  'int': 'number'
 };
 
 
@@ -238,8 +238,8 @@ cSource = replace(cSource, [
   }],
 
   // Replace var declarations and annotate type.
-  [RegExp('\b(' + cTypesRegexp + ')\\s+(.+);', 'g'), function(s, cType, varName) {
-    return '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
+  [RegExp('( +)(' + cTypesRegexp + ')\\s*(.+);', 'g'), function(s, space, cType, varName) {
+    return space + '/** @type {' + cTypesToJs[cType] + '} */ var ' + varName + ';';
   }],
 
   // Replace var declarations for user defined types.
